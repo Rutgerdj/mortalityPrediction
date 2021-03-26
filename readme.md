@@ -47,3 +47,13 @@ Python 3 is required. The models have been tested using python 3.8.5
     ```
     python train.py
     ```
+
+## First results
+
+These are the results of the first tests:
+
+### Accuracy per epoch
+![Alt text](graphs/Accuracy_1.png "Accuracy per epoch")
+
+### Loss per epoch
+![Alt text](graphs/Loss_1.png "Loss per epoch")
