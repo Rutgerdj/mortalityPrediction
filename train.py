@@ -6,9 +6,9 @@ import models
 import re
 
 
-def split_and_tokenize_data(tokenizer, max_length=config["max_length"], tokenizer_path=config["biobert_path"]):
+def split_and_tokenize_data(tokenizer, max_length, keyword_regex):
     raw_data = pd.read_csv("traindata.csv")
-    raw_data["found"] = raw_data.sentence.apply(lambda x: mort_regex.search(x) is not None)
+    raw_data["found"] = raw_data.sentence.apply(lambda x: keyword_regex.search(x) is not None)
 
     min_label = raw_data.label.value_counts().values[-1]
     num_test = int(min_label * 0.2)
@@ -71,7 +71,9 @@ if __name__ == '__main__':
     model_tokenizer = models.get_tokenizer(biobert_path)
     model = models.build_model(model_path=biobert_path)
 
-    X_train_model, y_train_model, X_test_model, y_test_model = split_and_tokenize_data(model_tokenizer)
+    X_train_model, y_train_model, X_test_model, y_test_model = split_and_tokenize_data(model_tokenizer,
+                                                                                       config["max_length"],
+                                                                                       mort_regex)
 
     fit_history = model.fit(X_train_model,
                             y_train_model,
