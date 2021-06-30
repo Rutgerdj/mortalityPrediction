@@ -17,11 +17,8 @@ def split_and_tokenize_data(tokenizer, max_length, keyword_regex):
     not_selected = raw_data.loc[raw_data.label == 0]
 
     with_mort = not_selected.loc[not_selected.found]
-    without_mort = not_selected.loc[not_selected.found == False]
-    ''' Better:
-    without_mort = not_selected.loc[not not_selected.found]
-    But you should check it gives the same result'''
-
+    without_mort = not_selected.loc[~not_selected.found]
+    
     test_df = selected.sample(n=num_test)
     train_df = selected.drop(index=test_df.index.values)
 
