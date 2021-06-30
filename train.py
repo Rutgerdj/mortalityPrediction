@@ -39,9 +39,6 @@ def split_and_tokenize_data(tokenizer, max_length=config["max_length"], tokenize
 
     assert all([x not in test_df.index for x in train_df.index.values]), "THERE IS OVERLAP IN TRAIN AND TEST DATA!"
 
-    if tokenizer is None:
-        tokenizer = models.get_tokenizer(tokenizer_path)
-
     X_train = np.array([tokenizer.encode(x, max_length=max_length, pad_to_max_length=True, truncation=True) for x in
                         train_df.sentence])
     X_test = np.array(
