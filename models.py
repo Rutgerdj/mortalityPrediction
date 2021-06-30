@@ -1,7 +1,4 @@
 from config import config
-if config["biobert_path"] == "<path to biobert files>":
-    raise Exception("Please change 'biobert_path' in config.py to the folder where you extracted the Biobert files")
-
 from transformers import BertTokenizer, BertModel
 from tensorflow.keras.layers import Input, Embedding, SpatialDropout1D, Bidirectional, GlobalMaxPooling1D
 from tensorflow.keras.layers import LSTM, Dense, GlobalAveragePooling1D, add, concatenate
@@ -9,19 +6,20 @@ from tensorflow.keras.models import Model
 
 
 
-def get_tokenizer():
-    return BertTokenizer.from_pretrained(config["biobert_path"])
+def get_tokenizer(pretrained_bert_tokenizer_path):
+    return BertTokenizer.from_pretrained(pretrained_bert_tokenizer_path)
 
-def get_bert_embed_matrix():
-    bert = BertModel.from_pretrained(config["biobert_path"])
+def get_bert_embed_matrix(pretrained_bert_model_path):
+    bert = BertModel.from_pretrained(pretrained_bert_model_path)
     bert_embeddings = list(bert.children())[0]
     bert_word_embeddings = list(bert_embeddings.children())[0]
     mat = bert_word_embeddings.weight.data.numpy()
     return mat
 
-def build_model(lstm_units = config["lstm_units"], max_length = config["max_length"], dropout = config["dropout"]):
+def build_model(lstm_units = config["lstm_units"], max_length = config["max_length"], dropout = config["dropout"],
+                model_path = config["biobert_path"]):
     dense_hidden_units = 4 * lstm_units
-    embeddings = get_bert_embed_matrix()
+    embeddings = get_bert_embed_matrix(model_path)
     words = Input(shape=(max_length,))
     x = Embedding(*embeddings.shape, weights=[embeddings], trainable=False)(words)
     x = SpatialDropout1D(dropout)(x)

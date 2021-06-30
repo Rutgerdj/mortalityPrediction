@@ -6,7 +6,7 @@ import models
 import re
 
 
-def split_and_tokenize_data(tokenizer, max_length=config["max_length"]):
+def split_and_tokenize_data(tokenizer, max_length=config["max_length"], tokenizer_path=config["biobert_path"]):
     raw_data = pd.read_csv("traindata.csv")
     raw_data["found"] = raw_data.sentence.apply(lambda x: mort_regex.search(x) is not None)
 
@@ -40,7 +40,7 @@ def split_and_tokenize_data(tokenizer, max_length=config["max_length"]):
     assert all([x not in test_df.index for x in train_df.index.values]), "THERE IS OVERLAP IN TRAIN AND TEST DATA!"
 
     if tokenizer is None:
-        tokenizer = models.get_tokenizer()
+        tokenizer = models.get_tokenizer(tokenizer_path)
 
     X_train = np.array([tokenizer.encode(x, max_length=max_length, pad_to_max_length=True, truncation=True) for x in
                         train_df.sentence])
@@ -65,14 +65,14 @@ if __name__ == '__main__':
 
     if config["biobert_path"] == "<path to biobert files>":
         raise Exception("Please change 'biobert_path' in config.py to the folder where you extracted the Biobert files")
-
+    biobert_path = config["biobert_path"]
 
     mort_regex = re.compile(r"fatal|died|death|mortality", flags = re.IGNORECASE)
 
 
 
-    model_tokenizer = models.get_tokenizer()
-    model = models.build_model()
+    model_tokenizer = models.get_tokenizer(biobert_path)
+    model = models.build_model(model_path=biobert_path)
 
     X_train_model, y_train_model, X_test_model, y_test_model = split_and_tokenize_data(model_tokenizer)
 
